@@ -56,5 +56,7 @@ public class SimplePaint extends View {
         invalidate();
 
         return super.onTouchEvent(event);
+
     }
+
 }
