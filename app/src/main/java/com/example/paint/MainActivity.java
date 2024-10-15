@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setLayoutColor(ColorEnvelope envelope) {
-        simplePaint.mPaint.setColor(envelope.getColor());
+        simplePaint.changeColor(envelope.getColor());
+
     }
 }
