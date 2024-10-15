@@ -20,8 +20,8 @@
 
     <com.example.paint.SimplePaint
         android:id="@+id/simplePaint"
-        android:layout_width="387dp"
-        android:layout_height="677dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="12dp"

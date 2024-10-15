@@ -12,27 +12,49 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.security.PublicKey;
+import java.util.ArrayList;
+
 
 public class SimplePaint extends View {
-    Path mPath;
+
+    ArrayList <Layer> layers;
     Paint mPaint;
     public SimplePaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        mPaint = new Paint();
-        mPath = new Path();
 
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStrokeWidth(6f);
-        mPaint.setAntiAlias(true);
-        mPaint.setStyle(Paint.Style.STROKE);
-
+        layers = new ArrayList<Layer>();
+        layers.add(new Layer(initialSetupPaint()));
     }
+
+    public Paint initialSetupPaint(){
+        Paint lpaint = new Paint();
+        lpaint.setStrokeWidth(5f);
+        lpaint.setColor(Color.BLACK);
+        lpaint.setStyle(Paint.Style.STROKE);
+        return lpaint;
+    }
+    public void changeColor(int color){
+        layers.add(new Layer(getCurrentLayer().paint));
+        getCurrentLayer().paint.setColor(color);
+    }
+
+    public void changeStrokeWidth(int width){
+        layers.add(new Layer(getCurrentLayer().paint));
+        getCurrentLayer().paint.setStrokeWidth(width);
+    }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        canvas.drawPath(mPath, mPaint);
         super.onDraw(canvas);
+        for (Layer cLayer:layers
+             ) {
+            canvas.drawPath(cLayer.path, cLayer.paint);
+            
+        }
+
     }
 
     @Override
@@ -42,21 +64,24 @@ public class SimplePaint extends View {
         event.getAction();
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                mPath.moveTo(x,y);
+                getCurrentLayer().path.moveTo(x,y);
                 return true;
             case MotionEvent.ACTION_MOVE:
-                mPath.lineTo(x,y);
-                invalidate();
-                return true;
+                getCurrentLayer().path.lineTo(x,y);
+
+                break;
             case MotionEvent.ACTION_UP:
                 break;
         }
 
-        mPath.lineTo(x,y);
+
         invalidate();
 
         return super.onTouchEvent(event);
 
+    }
+    public Layer getCurrentLayer(){
+        return layers.get(layers.size()-1);
     }
 
 }
