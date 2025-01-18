@@ -1,47 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="124dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="@+id/simplePaint"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.example.paint.SimplePaint
-        android:id="@+id/simplePaint"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"></com.example.paint.SimplePaint>
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="31dp"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toTopOf="@+id/simplePaint"
-        app:layout_constraintEnd_toEndOf="@+id/button"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Limpar" />
 
-    />
+        <Button
+            android:id="@+id/btn_shape_free"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Livre" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_shape_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Linha" />
+
+        <Button
+            android:id="@+id/btn_shape_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Círculo" />
+
+        <Button
+            android:id="@+id/btn_shape_rect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Retângulo" />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escolher Cor" />
+
+        <com.example.paint.SimplePaint
+            android:id="@+id/simplePaint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

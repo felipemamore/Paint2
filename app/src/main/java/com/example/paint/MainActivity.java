@@ -21,12 +21,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        simplePaint = findViewById(R.id.simplePaint);
         button = findViewById(R.id.button);
-        simplePaint=findViewById(R.id.simplePaint);
+
+        Button btnClear = findViewById(R.id.btn_clear);
+        Button btnFree = findViewById(R.id.btn_shape_free);
+        Button btnLine = findViewById(R.id.btn_shape_line);
+        Button btnCircle = findViewById(R.id.btn_shape_circle);
+        Button btnRect = findViewById(R.id.btn_shape_rect);
+
+
+
+        btnFree.setOnClickListener(v -> simplePaint.setShape(SimplePaint.ShapeType.FREE));
+        btnLine.setOnClickListener(v -> simplePaint.setShape(SimplePaint.ShapeType.LINE));
+        btnCircle.setOnClickListener(v -> simplePaint.setShape(SimplePaint.ShapeType.CIRCLE));
+        btnRect.setOnClickListener(v -> simplePaint.setShape(SimplePaint.ShapeType.RECTANGLE));
 
         button.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
+                showColorPicker();
+            }
+
+            private void showColorPicker() {
                 new ColorPickerDialog.Builder(MainActivity.this)
                         .setTitle("ColorPicker Dialog")
                         .setPreferenceName("MyColorPickerDialog")
@@ -34,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                                 new ColorEnvelopeListener() {
                                     @Override
                                     public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
-                                        setLayoutColor(envelope);
+                                        simplePaint.changeColor(envelope.getColor());
                                     }
                                 })
                         .setNegativeButton(getString(R.string.cancel),
@@ -52,10 +68,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                simplePaint.clearCanvas();
+            }
+        });
 
-    public void setLayoutColor(ColorEnvelope envelope) {
-        simplePaint.changeColor(envelope.getColor());
 
+
+//
+//    }
+
+//        public void setLayoutColor (ColorEnvelope envelope){
+//            simplePaint.changeColor(envelope.getColor());
+//
+//        }
     }
 }

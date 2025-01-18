@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,12 +21,17 @@ public class SimplePaint extends View {
 
     ArrayList <Layer> layers;
     Paint mPaint;
+    float startX, startY, endX, endY;
+    enum ShapeType {FREE, LINE, CIRCLE, RECTANGLE }
+    ShapeType currentShape = ShapeType.FREE;
+
     public SimplePaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
 
-        layers = new ArrayList<Layer>();
+        layers = new ArrayList<>();
         layers.add(new Layer(initialSetupPaint()));
+
     }
 
     public Paint initialSetupPaint(){
@@ -36,8 +42,10 @@ public class SimplePaint extends View {
         return lpaint;
     }
     public void changeColor(int color){
-        layers.add(new Layer(getCurrentLayer().paint));
-        getCurrentLayer().paint.setColor(color);
+        mPaint = new Paint(getCurrentLayer().paint);
+        mPaint.setColor(color);
+        layers.add(new Layer(mPaint));
+
     }
 
     public void changeStrokeWidth(int width){
@@ -45,14 +53,42 @@ public class SimplePaint extends View {
         getCurrentLayer().paint.setStrokeWidth(width);
     }
 
+    public void setShape(ShapeType shapeType){
+        this.currentShape = shapeType;
+    }
+
+    public void clearCanvas(){
+        layers.clear();
+        layers.add(new Layer(initialSetupPaint()));
+        invalidate();
+    }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        for (Layer cLayer:layers
+        for (Layer layer:layers
              ) {
-            canvas.drawPath(cLayer.path, cLayer.paint);
+            canvas.drawPath(layer.path, layer.paint);
             
+        }
+
+        if(currentShape != ShapeType.FREE){
+            Paint tempPaint = new Paint(getCurrentLayer().paint);
+            tempPaint.setStyle(Paint.Style.STROKE);
+            switch (currentShape){
+                case LINE:
+                    canvas.drawLine(startX, startY, endX, endY, tempPaint);
+                    break;
+                case CIRCLE:
+                    float radius = (float) Math.hypot(endX - startX, endY - startY);
+                    canvas.drawCircle(startX, startY, radius, tempPaint);
+                    break;
+                case RECTANGLE:
+                    canvas.drawRect(startX, startY, endX, endY, tempPaint);
+                    break;
+
+            }
         }
 
     }
@@ -64,13 +100,39 @@ public class SimplePaint extends View {
         event.getAction();
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                getCurrentLayer().path.moveTo(x,y);
+                startX = x;
+                startY = y;
+                if (currentShape == ShapeType.FREE) {
+                    getCurrentLayer().path.moveTo(x, y);
+                }
                 return true;
             case MotionEvent.ACTION_MOVE:
-                getCurrentLayer().path.lineTo(x,y);
-
+                if (currentShape == ShapeType.FREE) {
+                    getCurrentLayer().path.lineTo(x, y);
+                } else {
+                    endX = x;
+                    endY = y;
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if (currentShape != ShapeType.FREE) {
+                    Layer newLayer = new Layer(new Paint(getCurrentLayer().paint));
+                    switch (currentShape) {
+                        case LINE:
+                            newLayer.path.moveTo(startX, startY);
+                            newLayer.path.lineTo(endX, endY);
+                            break;
+                        case CIRCLE:
+                            float radius = (float) Math.hypot(endX - startX, endY - startY);
+                            newLayer.path.addCircle(startX, startY, radius, Path.Direction.CW);
+                            break;
+                        case RECTANGLE:
+                            RectF rect = new RectF(startX, startY, endX, endY);
+                            newLayer.path.addRect(rect, Path.Direction.CW);
+                            break;
+                    }
+                    layers.add(newLayer);
+                }
                 break;
         }
 
@@ -81,7 +143,16 @@ public class SimplePaint extends View {
 
     }
     public Layer getCurrentLayer(){
+
         return layers.get(layers.size()-1);
     }
+    static class Layer {
+        Path path;
+        Paint paint;
 
+        Layer(Paint paint) {
+            this.paint = new Paint(paint);
+            this.path = new Path();
+        }
+    }
 }
